@@ -1,0 +1,30 @@
+/* CSS for EolConditionalXBlock */
+
+.proctoring_hide_block .alert {
+    position: relative;
+    font-style: italic;
+    padding: .75rem 1.25rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    margin-bottom: 1em;
+}
+
+.proctoring_hide_block .alert-info {
+    background-color: #d9edf7;
+    border-color: #bcdff1;
+    color: #31708f !important;
+}
+
+.proctoring_hide_block .block_id {
+    font-weight: bold;
+}
+
+.proctoring_hide_block ul {
+    margin-left: 1em;
+}
+
+
+.proctoring_hide_block p {
+    font-style: italic;
+    text-align: justify;
+}
