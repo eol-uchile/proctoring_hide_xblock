@@ -1,9 +1,10 @@
 function ProctoringHideXBlock(runtime, element, settings) {
     $(function($) {
         console.log(window.location);
+        console.log(window.parent.location)
         console.log(window.top);
         console.log(window.self);
-        $('#seq_content').hide()
+       
         function inIframe () {
             try {
                 return window.self !== window.top;
@@ -12,11 +13,18 @@ function ProctoringHideXBlock(runtime, element, settings) {
                 return true;
             }
         }
-        if (inIframe ()){
-            console.log('inIframe');
+        if (inIframe()){
+            if (window.location.ancestorOrigins[0] == 'https://uchile.proctoring.app'){
+                $('#seq_content').show();
+            }
+            else{
+                $('#seq_content').hide();
+                alert("Cotenido visible solamente por Proctoring");
+            }
         }
         else{
-            console.log('Not inIframe');
+            $('#seq_content').hide();
+            alert("Cotenido visible solamente por Proctoring");
         }
     });
 }
