@@ -5,7 +5,7 @@ import pkg_resources
 from django.template import Context, Template
 
 from webob import Response
-
+from django.conf import settings as DJANGO_SETTINGS
 from xblock.core import XBlock
 from xblock.fields import Integer, String, Boolean, Scope
 from xblock.fragment import Fragment
@@ -34,21 +34,35 @@ class ProctoringHideXBlock(XBlock):
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
+    def show_staff_grading_interface(self):
+        """
+        Return if current user is staff and not in studio.
+        """
+        in_studio_preview = self.scope_ids.user_id is None
+        return self.is_course_staff() and not in_studio_preview
+
+    def is_course_staff(self):
+        # pylint: disable=no-member
+        """
+         Check if user is course staff.
+        """
+        return getattr(self.xmodule_runtime, 'user_is_staff', False)
+
     def student_view(self, context=None):
-        context_html = self.get_context()
-        template = self.render_template('static/html/proctoring_hide.html', context_html)
+        template = self.render_template('static/html/proctoring_hide.html', {'is_staff': self.show_staff_grading_interface()})
         frag = Fragment(template)
         frag.add_css(self.resource_string("static/css/proctoring_hide.css"))
         frag.add_javascript(self.resource_string("static/js/src/proctoring_hide.js"))
         settings = {
-            'location': self.location
+            'proctor_url': DJANGO_SETTINGS.PROCTORING_HIDE_URL,
+            'is_staff': self.show_staff_grading_interface()
         }
+
         frag.initialize_js('ProctoringHideXBlock', json_args=settings)
         return frag
 
     def studio_view(self, context=None):
-        context_html = self.get_context()
-        template = self.render_template('static/html/studio.html', context_html)
+        template = self.render_template('static/html/studio.html', {})
         frag = Fragment(template)
         frag.add_css(self.resource_string("static/css/proctoring_hide.css"))
         frag.add_javascript(self.resource_string("static/js/src/studio.js"))
@@ -56,8 +70,7 @@ class ProctoringHideXBlock(XBlock):
         return frag
     
     def author_view(self, context=None):
-        context_html = self.get_context()
-        template = self.render_template('static/html/author_view.html', context_html)
+        template = self.render_template('static/html/author_view.html', {})
         frag = Fragment(template)
         frag.add_css(self.resource_string("static/css/proctoring_hide.css"))
         return frag
@@ -66,11 +79,6 @@ class ProctoringHideXBlock(XBlock):
     def studio_submit(self, request, suffix=''):
         self.display_name = request.params['display_name']
         return Response({'result': 'success'}, content_type='application/json')
-
-    def get_context(self):
-        return {
-            'xblock': self
-        }
 
     def render_template(self, template_path, context):
         template_str = self.resource_string(template_path)

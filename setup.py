@@ -37,6 +37,12 @@ setup(
     entry_points={
         'xblock.v1': [
             'proctoring_hide = proctoring_hide:ProctoringHideXBlock',
+        ],
+        "lms.djangoapp": [
+            "proctoring_hide = proctoring_hide.apps:ProctoringHideConfig",
+        ],
+        "cms.djangoapp": [
+            "proctoring_hide = proctoring_hide.apps:ProctoringHideConfig",
         ]
     },
     package_data=package_data("proctoring_hide", ["static", "public"]),

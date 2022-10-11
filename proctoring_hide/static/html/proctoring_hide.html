@@ -1,1 +1,8 @@
 <!-- Eol Conditional XBlock -->
+{% if is_staff %}
+<div class="proctoring_hide_block">
+    <div class="alert alert-info">
+        <p>Las unidades de esta subsección solo serán visibles dentro del proctoring.</p>
+    </div>
+</div>
+{% endif %}
